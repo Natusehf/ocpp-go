@@ -400,9 +400,11 @@ func (endpoint *Endpoint) ParseMessage(arr []interface{}, pendingRequestState Cl
 			Action:        action,
 			Payload:       request,
 		}
-		err = Validate.Struct(call)
-		if err != nil {
-			return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, action)
+		if validationEnabled {
+			err = Validate.Struct(call)
+			if err != nil {
+				return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, action)
+			}
 		}
 		return &call, nil
 	} else if typeId == CALL_RESULT {
@@ -421,9 +423,11 @@ func (endpoint *Endpoint) ParseMessage(arr []interface{}, pendingRequestState Cl
 			UniqueId:      uniqueId,
 			Payload:       confirmation,
 		}
-		err = Validate.Struct(callResult)
-		if err != nil {
-			return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, request.GetFeatureName())
+		if validationEnabled {
+			err = Validate.Struct(callResult)
+			if err != nil {
+				return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, request.GetFeatureName())
+			}
 		}
 		return &callResult, nil
 	} else if typeId == CALL_ERROR {
@@ -452,9 +456,11 @@ func (endpoint *Endpoint) ParseMessage(arr []interface{}, pendingRequestState Cl
 			ErrorDescription: errorDescription,
 			ErrorDetails:     details,
 		}
-		err := Validate.Struct(callError)
-		if err != nil {
-			return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, "")
+		if validationEnabled {
+			err := Validate.Struct(callError)
+			if err != nil {
+				return nil, errorFromValidation(err.(validator.ValidationErrors), uniqueId, "")
+			}
 		}
 		return &callError, nil
 	} else {
